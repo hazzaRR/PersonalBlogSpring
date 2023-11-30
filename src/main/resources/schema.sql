@@ -1,4 +1,4 @@
-create table if not exists user (
+create table if not exists users (
     user_id BIGSERIAL PRIMARY KEY,
     username varchar not null,
     firstname varchar not null,
@@ -12,7 +12,7 @@ create table if not exists user (
 CREATE TABLE if not exists post (
     post_id BIGSERIAL PRIMARY KEY,
     title VARCHAR(255),
-    author_id BIGINT REFERENCES user(user_id),
+    author_id BIGINT REFERENCES users(user_id),
     date DATE,
     post_body TEXT,
     private_post BOOLEAN
@@ -26,7 +26,7 @@ CREATE TABLE if not exists category (
 CREATE TABLE if not exists comment (
     comment_id BIGSERIAL PRIMARY KEY,
     post_id BIGINT REFERENCES post(post_id),
-    author_id BIGINT REFERENCES user(user_id),
+    author_id BIGINT REFERENCES users(user_id),
     date DATE,
     comment_body TEXT
 );
