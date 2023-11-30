@@ -1,4 +1,4 @@
-spring:
-  datasource:
-    username: ${db.username}
-    password: ${db.password}
+#spring:
+#  datasource:
+#    username: ${db.username}
+#    password: ${db.password}

@@ -2,7 +2,14 @@ spring:
   datasource:
     username: postgres
     password: password
-    url: jdbc:postgresql://localhost:5432/blog
+    url: jdbc:postgresql://localhost:54321/blog
   sql:
     init:
       mode: always
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+        format_sql: true
