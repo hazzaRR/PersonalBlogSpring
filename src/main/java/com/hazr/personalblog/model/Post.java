@@ -18,7 +18,7 @@ public class Post {
     private String title;
 
     @ManyToOne
-    @JoinColumn(name = "author")
+    @JoinColumn(name = "author_id")
     private User author;
 
     @ManyToMany
