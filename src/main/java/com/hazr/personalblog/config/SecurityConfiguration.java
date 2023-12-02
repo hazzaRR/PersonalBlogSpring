@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth ->
-                        oauth.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                        oauth.jwt(Customizer.withDefaults()))
 //        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 //                .jwtAuthenticationConverter(jwtAuthenticationConverter());
 //        http.oauth2ResourceServer()
