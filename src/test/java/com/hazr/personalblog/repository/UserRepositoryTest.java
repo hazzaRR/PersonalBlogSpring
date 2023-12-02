@@ -38,16 +38,16 @@ public class UserRepositoryTest {
         assertThat(postgres.isRunning()).isTrue();
     }
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
-        List<User> users = List.of(new User[]{
-                new User("harryredman", "Harry", "Redman", "harryredman@email.com", "www.image.com"),
-                new User("username1", "John", "Doe", "johndoe@email.com", "www.image1.com")
-        });
-
-        userRepository.saveAll(users);
-    }
+//    @BeforeEach
+//    void setUp() {
+//        userRepository.deleteAll();
+//        List<User> users = List.of(new User[]{
+//                new User("harryredman", "password", "Harry", "Redman", "harryredman@email.com", "www.image.com"),
+//                new User("username1", "John", "Doe", "johndoe@email.com", "www.image1.com")
+//        });
+//
+//        userRepository.saveAll(users);
+//    }
 
 
     @Test
