@@ -3,6 +3,9 @@ package com.hazr.personalblog.controller;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.service.PostService;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,12 +18,24 @@ public class PostController {
 
     private final PostService postService;
 
-    public PostController(PostService postService) {
+    private final JwtDecoder jwtDecoder;
+
+    public PostController(PostService postService, JwtDecoder jwtDecoder) {
         this.postService = postService;
+        this.jwtDecoder = jwtDecoder;
     }
 
     @GetMapping("/test")
-    public String testEndpoint() {
+    public String testEndpoint(@RequestHeader (name="Authorization") String token) {
+
+        String[] tokenValue = token.trim().split(" ");
+
+        System.out.println(tokenValue[1]);
+
+        Jwt decodedToken =  jwtDecoder.decode(tokenValue[1]);
+
+        System.out.println(decodedToken.getSubject());
+
         return "This is a test";
     }
 
@@ -52,6 +67,19 @@ public class PostController {
 //    }
 
     //get all public posts
+
+    @GetMapping ("/public")
+
+    public List<Post> getPublicPosts() {
+        return postService.getPublicPosts();
+    }
+
+    //get top 8 latest posts
+
+    @GetMapping("/latest")
+    public List<Post> getLatestPosts() {
+        return postService.getLatestPosts();
+    }
 
 
     // add a post

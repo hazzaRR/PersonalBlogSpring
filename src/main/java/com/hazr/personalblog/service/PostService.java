@@ -46,4 +46,12 @@ public class PostService {
         }
 
     }
+
+    public List<Post> getLatestPosts() {
+        return postRepository.findLatestPosts();
+    }
+
+    public List<Post> getPublicPosts() {
+        return postRepository.findPublicPosts();
+    }
 }

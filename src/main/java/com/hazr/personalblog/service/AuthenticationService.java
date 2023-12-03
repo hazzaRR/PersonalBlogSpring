@@ -11,12 +11,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -65,9 +68,15 @@ public class AuthenticationService {
 
             String token = tokenService.generateJwt(auth);
 
-            System.out.println(auth);
+            String scope = auth.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(" "));
 
-            return new LoginResponseDTO(userRepository.findByUsername(username).get().getUsername(), token);
+//            System.out.println(scope);
+
+//            List<Role> userRoles = userRepository.findUserRoles(username);
+
+            return new LoginResponseDTO(auth.getAuthorities().stream().findFirst().get().getAuthority(), token);
 
         } catch(AuthenticationException e) {
             System.out.println(e);
