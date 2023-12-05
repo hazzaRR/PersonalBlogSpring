@@ -3,6 +3,7 @@ package com.hazr.personalblog.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,7 +28,7 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
-    private Set<Category> categories;
+    private List<Category> categories;
 
     @Column(name = "date")
     private LocalDate date;
@@ -41,7 +42,7 @@ public class Post {
     protected Post() {
     }
 
-    public Post(Long postId, String title, User author, Set<Category> categories, LocalDate date, String postBody, boolean privatePost) {
+    public Post(Long postId, String title, User author, List<Category> categories, LocalDate date, String postBody, boolean privatePost) {
         this.postId = postId;
         this.title = title;
         this.author = author;
@@ -51,7 +52,7 @@ public class Post {
         this.privatePost = privatePost;
     }
 
-    public Post(String title, User author, Set<Category> categories, LocalDate date, String postBody, boolean privatePost) {
+    public Post(String title, User author, List<Category> categories, LocalDate date, String postBody, boolean privatePost) {
         this.title = title;
         this.author = author;
         this.categories = categories;
@@ -84,11 +85,11 @@ public class Post {
         this.author = author;
     }
 
-    public Set<Category> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
 

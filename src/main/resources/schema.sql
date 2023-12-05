@@ -21,7 +21,8 @@ CREATE TABLE if not exists post (
 
 CREATE TABLE if not exists category (
     category_id BIGSERIAL PRIMARY KEY,
-    category_name VARCHAR(255)
+    category_name VARCHAR(255),
+    UNIQUE(category_name)
 );
 
 CREATE TABLE if not exists comment (

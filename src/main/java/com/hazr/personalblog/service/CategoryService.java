@@ -1,8 +1,11 @@
 package com.hazr.personalblog.service;
 
 
+import com.hazr.personalblog.model.Category;
 import com.hazr.personalblog.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CategoryService {
@@ -14,4 +17,12 @@ public class CategoryService {
     }
 
 
+    public List<Category> getCategories() {
+        return categoryRepository.findAll();
+    }
+
+    public void createCategory(String categoryName) {
+            Category newCategory = new Category(categoryName);
+            categoryRepository.save(newCategory);
+    }
 }

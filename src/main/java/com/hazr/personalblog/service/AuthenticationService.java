@@ -85,4 +85,14 @@ public class AuthenticationService {
         }
     }
 
+    public User registerAuthor(String username, String password, String firstname, String surname, String email, String profilePicURL) {
+        String encryptedPassword =  passwordEncoder.encode(password);
+
+        Role roleReader = roleRepository.findByAuthority("ROLE_READER").get();
+        Role roleAuthor = roleRepository.findByAuthority("ROLE_AUTHOR").get();
+
+        Set<Role> authorities = new HashSet<>(List.of(new Role[]{roleReader, roleAuthor}));
+
+        return userRepository.save(new User(username, encryptedPassword, authorities, firstname, surname, email, null));
+    }
 }

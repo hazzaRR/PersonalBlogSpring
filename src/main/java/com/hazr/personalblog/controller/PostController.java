@@ -1,5 +1,7 @@
 package com.hazr.personalblog.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hazr.personalblog.dto.ImageDTO;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.service.PostService;
@@ -7,12 +9,14 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/posts/")
+@RequestMapping("/api/posts")
+@CrossOrigin(origins = "http://localhost:5173")
 public class PostController {
 
 
@@ -49,12 +53,13 @@ public class PostController {
 
     //get specific post by id
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(path = "/postId/{id}")
     public Optional<Post> getPostById(@PathVariable long id) {
         return postService.getPostById(id);
     }
 
     //get post by title
+
 
     //get all posts with title that contains given string
 
@@ -69,7 +74,6 @@ public class PostController {
     //get all public posts
 
     @GetMapping ("/public")
-
     public List<Post> getPublicPosts() {
         return postService.getPublicPosts();
     }
@@ -84,12 +88,51 @@ public class PostController {
 
     // add a post
 
+//    @PostMapping("/")
+//    public String createPost(@RequestBody PostDTO post) {
+//        System.out.println(post.toString());
+////        postService.createPost(post);
+//        return "success";
+//    }
+
     @PostMapping("/")
-    public void createPost(@RequestBody PostDTO post) {
-        postService.createPost(post);
+    public String createPost(@RequestPart("postDetails") String postDetails,
+                             @RequestPart("images") List<MultipartFile> images) {
+        try {
+            // Parse the JSON data
+//            ObjectMapper objectMapper = new ObjectMapper();
+//            PostDTO postDetails = objectMapper.readValue(postDetailsJson, PostDTO.class);
+
+            System.out.println(postDetails);
+
+            // Now you can access postDetails and images in your business logic
+            // Handle the files and postDetails accordingly
+
+            System.out.println(images.toString());
+
+            for (MultipartFile imageFile : images) {
+                System.out.println(imageFile.getOriginalFilename());
+                // Handle the file and fileName accordingly
+
+            }
+
+            return "Post uploaded successfully!";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error uploading post";
+        }
     }
 
     //delete post
 
+    @DeleteMapping("/author/{id}")
+    public void deletePostById(@PathVariable long id) {
+        postService.deletePost(id);
+    }
+
     //update post
+    @PutMapping("/author/{postId}")
+    public void updatePost(@PathVariable Long postId, @RequestBody Post updatedPost) {
+        postService.updatePost(updatedPost);
+    }
 }
