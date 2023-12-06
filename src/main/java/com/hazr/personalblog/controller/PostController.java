@@ -96,25 +96,17 @@ public class PostController {
 //    }
 
     @PostMapping("/")
-    public String createPost(@RequestPart("postDetails") String postDetails,
-                             @RequestPart("images") List<MultipartFile> images) {
+    public String createPost(@RequestPart("postDetails") PostDTO postDetails,
+                             @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage) {
         try {
-            // Parse the JSON data
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            PostDTO postDetails = objectMapper.readValue(postDetailsJson, PostDTO.class);
 
-            System.out.println(postDetails);
 
-            // Now you can access postDetails and images in your business logic
-            // Handle the files and postDetails accordingly
-
-            System.out.println(images.toString());
-
-            for (MultipartFile imageFile : images) {
-                System.out.println(imageFile.getOriginalFilename());
-                // Handle the file and fileName accordingly
-
+            if (bannerImage != null) {
+                System.out.println(bannerImage.getOriginalFilename());
             }
+
+//            postService.createPost();
+            System.out.println(postDetails);
 
             return "Post uploaded successfully!";
         } catch (Exception e) {

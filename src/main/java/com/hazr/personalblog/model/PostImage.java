@@ -12,7 +12,7 @@ public class PostImage {
     @Column(name = "post_image_id")
     private Long postImageId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "Post_id", nullable = false)
     private Post post;
 

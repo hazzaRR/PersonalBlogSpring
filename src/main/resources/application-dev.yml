@@ -13,3 +13,10 @@ spring:
     show-sql: true
     properties:
         format_sql: true
+
+azure:
+  storage:
+    container:
+      name: blog-images
+    connection:
+      string:

@@ -12,9 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.LoginException;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:5173")
 public class AuthController {
 
     @Autowired
@@ -28,10 +30,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody LoginDTO body) throws LoginException {
 
+        System.out.println(body.toString());
+
         LoginResponseDTO loginResponse = authenticationService.loginUser(body.getUsername(), body.getPassword());
 
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @GetMapping("/check")
+    public String authCheck(Principal principal) {
+        return "hello" + principal.getName();
     }
 
 

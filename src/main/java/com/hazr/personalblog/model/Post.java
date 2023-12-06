@@ -30,7 +30,7 @@ public class Post {
     )
     private List<Category> categories;
 
-    @Column(name = "date")
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
     @Column(name = "post_body")

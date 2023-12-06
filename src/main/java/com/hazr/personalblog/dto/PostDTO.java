@@ -1,36 +1,29 @@
 package com.hazr.personalblog.dto;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 public class PostDTO {
 
     private String title;
 
-    private String username;
+    private String author;
 
-    private Set<Long> categoryIds;
-
-    private LocalDate date;
+    private Set<Long> categories;
 
     private String content;
 
     private boolean privatePost;
 
-    private List<ImageDTO> images;
 
     public PostDTO() {
     }
 
-    public PostDTO(String title, String username, Set<Long> categoryIds, LocalDate date, String content, boolean privatePost, List<ImageDTO> images) {
+    public PostDTO(String title, String author, Set<Long> categories, String content, boolean privatePost) {
         this.title = title;
-        this.username = username;
-        this.categoryIds = categoryIds;
-        this.date = date;
+        this.author = author;
+        this.categories = categories;
         this.content = content;
         this.privatePost = privatePost;
-        this.images = images;
     }
 
     public String getTitle() {
@@ -41,21 +34,14 @@ public class PostDTO {
         this.title = title;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
 
     public String getContent() {
         return content;
@@ -73,32 +59,23 @@ public class PostDTO {
         this.privatePost = privatePost;
     }
 
-    public Set<Long> getCategoryIds() {
-        return categoryIds;
+    public Set<Long> getCategories() {
+        return categories;
     }
 
-    public void setCategoryIds(Set<Long> categoryIds) {
-        this.categoryIds = categoryIds;
+    public void setCategories(Set<Long> categories) {
+        this.categories = categories;
     }
 
-    public List<ImageDTO> getImages() {
-        return images;
-    }
-
-    public void setImages(List<ImageDTO> images) {
-        this.images = images;
-    }
 
     @Override
     public String toString() {
         return "PostDTO{" +
                 "title='" + title + '\'' +
-                ", username='" + username + '\'' +
-                ", categoryIds=" + categoryIds +
-                ", date=" + date +
+                ", username='" + author + '\'' +
+                ", categoryIds=" + categories +
                 ", content='" + content + '\'' +
                 ", privatePost=" + privatePost +
-                ", images=" + images +
                 '}';
     }
 }

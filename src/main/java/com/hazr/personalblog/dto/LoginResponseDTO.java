@@ -1,17 +1,22 @@
 package com.hazr.personalblog.dto;
 
+import java.util.List;
+
 public class LoginResponseDTO {
 
     private String username;
-    private String jwt;
+    private String token;
+
+    private List<String> roles;
 
     public LoginResponseDTO() {
 
     }
 
-    public LoginResponseDTO(String username, String jwt) {
+    public LoginResponseDTO(String username, String token, List<String> roles) {
         this.username = username;
-        this.jwt = jwt;
+        this.token = token;
+        this.roles = roles;
     }
 
     public String getUsername() {
@@ -22,11 +27,19 @@ public class LoginResponseDTO {
         this.username = username;
     }
 
-    public String getJwt() {
-        return this.jwt;
+    public String getToken() {
+        return this.token;
     }
 
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public List<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
     }
 }

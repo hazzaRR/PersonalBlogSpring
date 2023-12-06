@@ -68,15 +68,15 @@ public class AuthenticationService {
 
             String token = tokenService.generateJwt(auth);
 
-            String scope = auth.getAuthorities().stream()
+            List<String> roles = auth.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
-                    .collect(Collectors.joining(" "));
+                    .collect(Collectors.toList());
 
 //            System.out.println(scope);
 
 //            List<Role> userRoles = userRepository.findUserRoles(username);
 
-            return new LoginResponseDTO(auth.getAuthorities().stream().findFirst().get().getAuthority(), token);
+            return new LoginResponseDTO(username, token, roles);
 
         } catch(AuthenticationException e) {
             System.out.println(e);

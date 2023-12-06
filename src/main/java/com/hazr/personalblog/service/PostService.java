@@ -10,6 +10,7 @@ import com.hazr.personalblog.repository.PostRepository;
 import com.hazr.personalblog.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,10 +44,10 @@ public class PostService {
 
         try {
 
-            User author = userRepository.findByUsername(post.getUsername()).get();
+            User author = userRepository.findByUsername(post.getAuthor()).get();
 
-            List<Category> categories = categoryRepository.findAllById(post.getCategoryIds());
-            Post newPost = new Post(post.getTitle(), author, categories, post.getDate(), post.getContent(), post.isPrivatePost());
+            List<Category> categories = categoryRepository.findAllById(post.getCategories());
+            Post newPost = new Post(post.getTitle(), author, categories, LocalDate.now(), post.getContent(), post.isPrivatePost());
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
