@@ -19,4 +19,4 @@ azure:
     container:
       name: blog-images
     connection:
-      string:
+      string: ${connection_string}

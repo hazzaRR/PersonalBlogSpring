@@ -74,7 +74,7 @@ public class AzureController {
         if (data != null) {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentLength(data.length);
-            headers.set("Content-Disposition", "attachment; filename=" + blobName);
+//            headers.set("Content-Disposition", "attachment; filename=" + blobName);
             return new ResponseEntity<>(data, headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
