@@ -1,6 +1,8 @@
 package com.hazr.personalblog.dto;
 
-import java.util.Set;
+import com.hazr.personalblog.model.Category;
+
+import java.util.List;
 
 public class PostDTO {
 
@@ -8,22 +10,25 @@ public class PostDTO {
 
     private String author;
 
-    private Set<Long> categories;
+    private List<Category> categories;
 
     private String content;
 
     private boolean privatePost;
 
+    private String altText;
+
 
     public PostDTO() {
     }
 
-    public PostDTO(String title, String author, Set<Long> categories, String content, boolean privatePost) {
+    public PostDTO(String title, String author, List<Category> categories, String content, boolean privatePost, String altText) {
         this.title = title;
         this.author = author;
         this.categories = categories;
         this.content = content;
         this.privatePost = privatePost;
+        this.altText = altText;
     }
 
     public String getTitle() {
@@ -59,12 +64,20 @@ public class PostDTO {
         this.privatePost = privatePost;
     }
 
-    public Set<Long> getCategories() {
+    public List<Category> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Long> categories) {
+    public void setCategories(List<Category> categories) {
         this.categories = categories;
+    }
+
+    public String getAltText() {
+        return altText;
+    }
+
+    public void setAltText(String altText) {
+        this.altText = altText;
     }
 
 

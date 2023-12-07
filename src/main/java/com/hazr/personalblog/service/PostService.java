@@ -8,6 +8,7 @@ import com.hazr.personalblog.model.User;
 import com.hazr.personalblog.repository.CategoryRepository;
 import com.hazr.personalblog.repository.PostRepository;
 import com.hazr.personalblog.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -40,17 +41,21 @@ public class PostService {
         return postRepository.findByCategory(categoryId);
     }
 
-    public void createPost(PostDTO post) {
+    public Post createPost(PostDTO post) {
 
         try {
 
             User author = userRepository.findByUsername(post.getAuthor()).get();
 
-            List<Category> categories = categoryRepository.findAllById(post.getCategories());
-            Post newPost = new Post(post.getTitle(), author, categories, LocalDate.now(), post.getContent(), post.isPrivatePost());
+            Post newPost = new Post(post.getTitle(), author, post.getCategories(), LocalDate.now(), post.getContent(), post.isPrivatePost());
+
+            postRepository.save(newPost);
+
+            return newPost;
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
+            return null;
         }
 
     }
@@ -67,6 +72,8 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
+
+    @Transactional
     public void updatePost(Post updatedPost) {
 
         Post existingPost = postRepository.findById(updatedPost.getPostId())

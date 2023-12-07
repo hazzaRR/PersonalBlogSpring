@@ -30,6 +30,17 @@ public class Post {
     )
     private List<Category> categories;
 
+    public PostImage getBannerImage() {
+        return bannerImage;
+    }
+
+    public void setBannerImage(PostImage bannerImage) {
+        this.bannerImage = bannerImage;
+    }
+
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PostImage bannerImage;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 

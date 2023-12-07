@@ -1,13 +1,12 @@
 package com.hazr.personalblog.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hazr.personalblog.dto.ImageDTO;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.model.Post;
+import com.hazr.personalblog.service.AzureBlobService;
+import com.hazr.personalblog.service.PostImageService;
 import com.hazr.personalblog.service.PostService;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,12 +21,19 @@ public class PostController {
 
     private final PostService postService;
 
+    private final AzureBlobService azureBlobService;
+
+    private final PostImageService postImageService;
+
     private final JwtDecoder jwtDecoder;
 
-    public PostController(PostService postService, JwtDecoder jwtDecoder) {
+    public PostController(PostService postService, AzureBlobService azureBlobService, PostImageService postImageService, JwtDecoder jwtDecoder) {
         this.postService = postService;
+        this.azureBlobService = azureBlobService;
+        this.postImageService = postImageService;
         this.jwtDecoder = jwtDecoder;
     }
+
 
     @GetMapping("/test")
     public String testEndpoint(@RequestHeader (name="Authorization") String token) {
@@ -97,16 +103,21 @@ public class PostController {
 
     @PostMapping("/")
     public String createPost(@RequestPart("postDetails") PostDTO postDetails,
-                             @RequestPart(value = "bannerImage", required = false) MultipartFile bannerImage) {
+                             @RequestPart(value = "bannerImage", required = false) MultipartFile image_file) {
         try {
 
+            Post post = postService.createPost(postDetails);
 
-            if (bannerImage != null) {
-                System.out.println(bannerImage.getOriginalFilename());
+
+            if (image_file != null) {
+                System.out.println(image_file);
+
+                String fileName = azureBlobService.upload("postId_" + post.getPostId() + "_bannerImage", image_file);
+
+                postImageService.createPostImage(post, fileName, postDetails.getAltText());
+
             }
 
-//            postService.createPost();
-            System.out.println(postDetails);
 
             return "Post uploaded successfully!";
         } catch (Exception e) {
