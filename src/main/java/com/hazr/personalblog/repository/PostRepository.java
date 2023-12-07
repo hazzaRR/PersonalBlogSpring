@@ -21,6 +21,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findLatestPosts();
 
     @Query(value = "SELECT p.* FROM post p " +
-            "WHERE p.private = true", nativeQuery = true)
+            "WHERE p.private_post = false", nativeQuery = true)
     List<Post> findPublicPosts();
 }

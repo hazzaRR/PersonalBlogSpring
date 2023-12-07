@@ -24,10 +24,11 @@ public class AzureBlobService {
 
     public String upload(String blobName, MultipartFile multipartFile) throws IOException {
         String fileExtension = multipartFile.getOriginalFilename().split("\\.")[1];
-        BlobClient blobClient = blobContainerClient.getBlobClient(blobName+ "." + fileExtension);
+        String fileName = blobName+ "." + fileExtension;
+        BlobClient blobClient = blobContainerClient.getBlobClient(fileName);
         blobClient.upload(multipartFile.getInputStream(), multipartFile.getSize(), true);
 
-        return blobName;
+        return fileName;
     }
 
     public byte[] getFile(String fileName) {

@@ -1,10 +1,14 @@
 package com.hazr.personalblog.controller;
 
+import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.service.AzureBlobService;
 import com.hazr.personalblog.service.PostImageService;
 import com.hazr.personalblog.service.PostService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.web.bind.annotation.*;
@@ -35,25 +39,31 @@ public class PostController {
     }
 
 
-    @GetMapping("/test")
-    public String testEndpoint(@RequestHeader (name="Authorization") String token) {
-
-        String[] tokenValue = token.trim().split(" ");
-
-        System.out.println(tokenValue[1]);
-
-        Jwt decodedToken =  jwtDecoder.decode(tokenValue[1]);
-
-        System.out.println(decodedToken.getSubject());
-
-        return "This is a test";
-    }
+//    @GetMapping("/test")
+//    public String testEndpoint(@RequestHeader (name="Authorization") String token) {
+//
+//        String[] tokenValue = token.trim().split(" ");
+//
+//        System.out.println(tokenValue[1]);
+//
+//        Jwt decodedToken =  jwtDecoder.decode(tokenValue[1]);
+//
+//        System.out.println(decodedToken.getSubject());
+//
+//        return "This is a test";
+//    }
 
 
     //get all posts
     @GetMapping("/")
-    public List<Post> getPosts() {
+    public List<FetchedPostDTO> getPosts() {
+        System.out.println("we get here");
         return postService.getPosts();
+    }
+
+    @GetMapping("/hello")
+    public String getResponse() {
+        return "hello harry";
     }
 
 
@@ -77,29 +87,37 @@ public class PostController {
 //
 //    }
 
+
+//    @GetMapping("/postId/{id}")
+//    public ResponseEntity<byte[]> downloadBlob(@PathVariable long id) {
+//
+//        byte[] data = azureBlobService.getFile(blobName);
+//        if (data != null) {
+//            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentLength(data.length);
+////            headers.set("Content-Disposition", "attachment; filename=" + blobName);
+//            return new ResponseEntity<>(data, headers, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
+
     //get all public posts
 
     @GetMapping ("/public")
-    public List<Post> getPublicPosts() {
+    public List<FetchedPostDTO> getPublicPosts() {
         return postService.getPublicPosts();
     }
 
     //get top 8 latest posts
 
     @GetMapping("/latest")
-    public List<Post> getLatestPosts() {
+    public List<FetchedPostDTO> getLatestPosts() {
         return postService.getLatestPosts();
     }
 
 
     // add a post
-
-//    @PostMapping("/")
-//    public String createPost(@RequestBody PostDTO post) {
-//        System.out.println(post.toString());
-////        postService.createPost(post);
-//        return "success";
-//    }
 
     @PostMapping("/")
     public String createPost(@RequestPart("postDetails") PostDTO postDetails,
@@ -114,6 +132,7 @@ public class PostController {
 
                 String fileName = azureBlobService.upload("postId_" + post.getPostId() + "_bannerImage", image_file);
 
+                System.out.println(fileName);
                 postImageService.createPostImage(post, fileName, postDetails.getAltText());
 
             }
@@ -128,13 +147,13 @@ public class PostController {
 
     //delete post
 
-    @DeleteMapping("/author/{id}")
+    @DeleteMapping("/postId/{id}")
     public void deletePostById(@PathVariable long id) {
         postService.deletePost(id);
     }
 
     //update post
-    @PutMapping("/author/{postId}")
+    @PutMapping("/postId/{postId}")
     public void updatePost(@PathVariable Long postId, @RequestBody Post updatedPost) {
         postService.updatePost(updatedPost);
     }

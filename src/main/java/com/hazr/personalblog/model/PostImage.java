@@ -19,23 +19,23 @@ public class PostImage {
     @Column(name = "photo_url")
     private String photoURL;
 
-    @Column(name = "metadata")
-    private String metaData;
+    @Column(name = "alt_text")
+    private String altText;
 
     protected PostImage() {
     }
 
-    public PostImage(Long postImageId, Post post, String photoURL, String metaData) {
+    public PostImage(Long postImageId, Post post, String photoURL, String altText) {
         this.postImageId = postImageId;
         this.post = post;
         this.photoURL = photoURL;
-        this.metaData = metaData;
+        this.altText = altText;
     }
 
-    public PostImage(Post post, String photoURL, String metaData) {
+    public PostImage(Post post, String photoURL, String altText) {
         this.post = post;
         this.photoURL = photoURL;
-        this.metaData = metaData;
+        this.altText = altText;
     }
 
     public Long getPostImageId() {
@@ -62,11 +62,11 @@ public class PostImage {
         this.photoURL = photoURL;
     }
 
-    public String getMetaData() {
-        return metaData;
+    public String getAltText() {
+        return altText;
     }
 
-    public void setMetaData(String metaData) {
-        this.metaData = metaData;
+    public void setAltText(String metaData) {
+        this.altText = metaData;
     }
 }

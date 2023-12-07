@@ -1,8 +1,8 @@
 package com.hazr.personalblog.service;
 
 
+import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
-import com.hazr.personalblog.model.Category;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.model.User;
 import com.hazr.personalblog.repository.CategoryRepository;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -23,14 +24,29 @@ public class PostService {
 
     private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+    private final AzureBlobService azureBlobService;
+
+    public PostService(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, AzureBlobService azureBlobService) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.azureBlobService = azureBlobService;
     }
 
-    public List<Post> getPosts() {
-        return postRepository.findAll();
+    public List<FetchedPostDTO> getPosts() {
+        List<Post> allPosts = postRepository.findAll();
+
+
+        List<FetchedPostDTO> posts = allPosts.stream().map(post -> {
+
+            byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
+
+            return new FetchedPostDTO(post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                    post.getCategories(), post.getPostBody(), post.isPrivatePost(),post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+
+        }).collect(Collectors.toList());
+
+        return posts;
     }
 
     public Optional<Post> getPostById(long id) {
@@ -60,12 +76,34 @@ public class PostService {
 
     }
 
-    public List<Post> getLatestPosts() {
-        return postRepository.findLatestPosts();
+    public List<FetchedPostDTO> getLatestPosts() {
+        List<Post> latestPostsResponse =  postRepository.findLatestPosts();
+
+        List<FetchedPostDTO> latestPosts = latestPostsResponse.stream().map(post -> {
+
+            byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
+
+            return new FetchedPostDTO(post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                    post.getCategories(), post.getPostBody(), post.isPrivatePost(),post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+
+        }).collect(Collectors.toList());
+
+        return latestPosts;
     }
 
-    public List<Post> getPublicPosts() {
-        return postRepository.findPublicPosts();
+    public List<FetchedPostDTO> getPublicPosts() {
+        List<Post> latestPostsResponse =  postRepository.findPublicPosts();
+
+        List<FetchedPostDTO> latestPosts = latestPostsResponse.stream().map(post -> {
+
+            byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
+
+            return new FetchedPostDTO(post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                    post.getCategories(), post.getPostBody(), post.isPrivatePost(),post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+
+        }).collect(Collectors.toList());
+
+        return latestPosts;
     }
 
     public void deletePost(long id) {
