@@ -2,9 +2,12 @@ package com.hazr.personalblog.dto;
 
 import com.hazr.personalblog.model.Category;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class FetchedPostDTO {
+
+    private Long postId;
 
     private String title;
 
@@ -18,6 +21,8 @@ public class FetchedPostDTO {
 
     private boolean privatePost;
 
+    private LocalDate postedOn;
+
     private String altText;
 
     private byte[] bannerImage;
@@ -26,24 +31,36 @@ public class FetchedPostDTO {
     public FetchedPostDTO() {
     }
 
-    public FetchedPostDTO(String title, String firstname, String surname, List<Category> categories, String content, boolean privatePost, String altText, byte[] bannerImage) {
+    public FetchedPostDTO(Long postId, String title, String firstname, String surname, List<Category> categories, String content, boolean privatePost, LocalDate postedOn, String altText, byte[] bannerImage) {
+        this.postId = postId;
         this.title = title;
         this.firstname = firstname;
         this.surname = surname;
         this.categories = categories;
         this.content = content;
         this.privatePost = privatePost;
+        this.postedOn = postedOn;
         this.altText = altText;
         this.bannerImage = bannerImage;
     }
 
-    public FetchedPostDTO(String title, String firstname, String surname, List<Category> categories, String content, boolean privatePost) {
+    public FetchedPostDTO(Long postId, String title, String firstname, String surname, List<Category> categories, String content, boolean privatePost, LocalDate postedOn) {
+        this.postId = postId;
         this.title = title;
         this.firstname = firstname;
         this.surname = surname;
         this.categories = categories;
         this.content = content;
         this.privatePost = privatePost;
+        this.postedOn = postedOn;
+    }
+
+    public Long getPostId() {
+        return postId;
+    }
+
+    public void setPostId(Long postId) {
+        this.postId = postId;
     }
 
     public String getFirstname() {
@@ -109,5 +126,13 @@ public class FetchedPostDTO {
 
     public void setBannerImage(byte[] bannerImage) {
         this.bannerImage = bannerImage;
+    }
+
+    public LocalDate getPostedOn() {
+        return postedOn;
+    }
+
+    public void setPostedOn(LocalDate postedOn) {
+        this.postedOn = postedOn;
     }
 }

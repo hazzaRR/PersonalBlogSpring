@@ -41,8 +41,8 @@ public class PostService {
 
             byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
 
-            return new FetchedPostDTO(post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                    post.getCategories(), post.getPostBody(), post.isPrivatePost(),post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+            return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                    post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate() ,post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
 
         }).collect(Collectors.toList());
 
@@ -81,12 +81,21 @@ public class PostService {
 
         List<FetchedPostDTO> latestPosts = latestPostsResponse.stream().map(post -> {
 
-            byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
+            if (post.getBannerImage() != null) {
 
-            return new FetchedPostDTO(post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                    post.getCategories(), post.getPostBody(), post.isPrivatePost(),post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate(), post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
 
-        }).collect(Collectors.toList());
+            }
+            else {
+
+                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate());
+
+
+            }
+
+        }).toList();
 
         return latestPosts;
     }
@@ -96,10 +105,19 @@ public class PostService {
 
         List<FetchedPostDTO> latestPosts = latestPostsResponse.stream().map(post -> {
 
-            byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
+            if (post.getBannerImage() != null) {
 
-            return new FetchedPostDTO(post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                    post.getCategories(), post.getPostBody(), post.isPrivatePost(),post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate(), post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+
+            }
+            else {
+
+                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
+                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate());
+
+
+            }
 
         }).collect(Collectors.toList());
 
