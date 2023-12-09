@@ -1,12 +1,13 @@
 package com.hazr.personalblog.service;
 
 import com.hazr.personalblog.dto.LoginResponseDTO;
+import com.hazr.personalblog.exception.EmailAlreadyTakenException;
+import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
 import com.hazr.personalblog.model.Role;
 import com.hazr.personalblog.model.User;
 import com.hazr.personalblog.repository.RoleRepository;
 import com.hazr.personalblog.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import javax.security.auth.login.LoginException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -85,7 +87,22 @@ public class AuthenticationService {
         }
     }
 
-    public User registerAuthor(String username, String password, String firstname, String surname, String email, String profilePicURL) {
+    public User registerAuthor(String username, String password, String firstname, String surname, String email, String profilePicURL) throws EmailAlreadyTakenException, UsernameAlreadyTakenException{
+
+
+        Optional<User> usernameAlreadyExists = userRepository.findByUsername(username);
+
+        if (usernameAlreadyExists.isPresent()) {
+            throw new UsernameAlreadyTakenException("the username "+ username + " is already taken");
+        }
+
+        Optional<User> emailAlreadyExists = userRepository.findByEmail(email);
+
+        if (emailAlreadyExists.isPresent()) {
+            throw new EmailAlreadyTakenException("the email "+ email + " is already taken");
+        }
+
+
         String encryptedPassword =  passwordEncoder.encode(password);
 
         Role roleReader = roleRepository.findByAuthority("ROLE_READER").get();
@@ -93,6 +110,6 @@ public class AuthenticationService {
 
         Set<Role> authorities = new HashSet<>(List.of(new Role[]{roleReader, roleAuthor}));
 
-        return userRepository.save(new User(username, encryptedPassword, authorities, firstname, surname, email, null));
+        return userRepository.save(new User(username, encryptedPassword, authorities, firstname, surname, email, profilePicURL));
     }
 }

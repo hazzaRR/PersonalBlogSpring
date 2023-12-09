@@ -71,6 +71,15 @@ public class User implements UserDetails {
         this.profilePicURL = profilePicURL;
     }
 
+    public User(String username, String password, Set<Role> authorities, String firstname, String surname, String email) {
+        this.username = username;
+        this.password = password;
+        this.authorities = authorities;
+        this.firstname = firstname;
+        this.surname = surname;
+        this.email = email;
+    }
+
     public Long getUserId() {
         return userId;
     }
