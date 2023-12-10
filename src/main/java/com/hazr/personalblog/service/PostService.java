@@ -4,6 +4,8 @@ package com.hazr.personalblog.service;
 import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.exception.PostDoesNotExistException;
+import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
+import com.hazr.personalblog.exception.UsernameDoesNotExistException;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.model.User;
 import com.hazr.personalblog.repository.CategoryRepository;
@@ -106,8 +108,13 @@ public class PostService {
 
         try {
 
-            User author = userRepository.findByUsername(post.getAuthor()).get();
+            Optional<User> user = userRepository.findByUsername(post.getAuthor());
 
+            if (user.isEmpty()) {
+                throw new UsernameDoesNotExistException("the username "+ post.getAuthor() + " does not exist");
+            }
+
+            User author = user.get();
             Post newPost = new Post(post.getTitle(), author, post.getCategories(), LocalDate.now(), post.getContent(), post.isPrivatePost());
 
             postRepository.save(newPost);
