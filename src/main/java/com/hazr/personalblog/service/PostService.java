@@ -3,6 +3,7 @@ package com.hazr.personalblog.service;
 
 import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
+import com.hazr.personalblog.exception.PostDoesNotExistException;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.model.User;
 import com.hazr.personalblog.repository.CategoryRepository;
@@ -49,8 +50,25 @@ public class PostService {
         return posts;
     }
 
-    public Optional<Post> getPostById(long id) {
-        return postRepository.findById(id);
+    public FetchedPostDTO getPostById(long id) throws PostDoesNotExistException {
+        Optional<Post> post = postRepository.findById(id);
+
+        if (post.isEmpty()) {
+            throw new PostDoesNotExistException("the post with the id"+ id + " does not exist");
+        }
+
+        Post postDetails = post.get();
+
+        if (postDetails.getBannerImage() != null) {
+
+            return new FetchedPostDTO(postDetails.getPostId(), postDetails.getTitle(), postDetails.getAuthor().getFirstname(), postDetails.getAuthor().getSurname(),
+                    postDetails.getCategories(), postDetails.getPostBody(), postDetails.isPrivatePost(), postDetails.getDate(), postDetails.getBannerImage().getAltText(), azureBlobService.getFile(postDetails.getBannerImage().getPhotoURL()));
+
+
+        }
+
+        return new FetchedPostDTO(postDetails.getPostId(), postDetails.getTitle(), postDetails.getAuthor().getFirstname(), postDetails.getAuthor().getSurname(),
+                postDetails.getCategories(), postDetails.getPostBody(), postDetails.isPrivatePost(), postDetails.getDate());
     }
 
     public List<Post> getPostsByCategory(Long categoryId) {

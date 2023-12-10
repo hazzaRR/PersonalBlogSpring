@@ -2,6 +2,8 @@ package com.hazr.personalblog.controller;
 
 import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
+import com.hazr.personalblog.exception.PostDoesNotExistException;
+import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.service.AzureBlobService;
 import com.hazr.personalblog.service.PostImageService;
@@ -70,7 +72,7 @@ public class PostController {
     //get specific post by id
 
     @GetMapping(path = "/postId/{id}")
-    public Optional<Post> getPostById(@PathVariable long id) {
+    public FetchedPostDTO getPostById(@PathVariable long id) {
         return postService.getPostById(id);
     }
 
@@ -156,5 +158,10 @@ public class PostController {
     @PutMapping("/postId/{postId}")
     public void updatePost(@PathVariable Long postId, @RequestBody Post updatedPost) {
         postService.updatePost(updatedPost);
+    }
+
+    @ExceptionHandler(PostDoesNotExistException.class)
+    public ResponseEntity<String> handlePostDoesNotExistException(PostDoesNotExistException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

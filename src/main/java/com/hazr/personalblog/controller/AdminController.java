@@ -57,7 +57,7 @@ public class AdminController {
     }
 
     @ExceptionHandler(UsernameAlreadyTakenException.class)
-    public ResponseEntity<String> handleEmailExistsException(UsernameAlreadyTakenException e) {
+    public ResponseEntity<String> handleUsernameExistsException(UsernameAlreadyTakenException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
