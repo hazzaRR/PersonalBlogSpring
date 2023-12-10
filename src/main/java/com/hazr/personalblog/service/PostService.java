@@ -32,22 +32,39 @@ public class PostService {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.azureBlobService = azureBlobService;
+
     }
 
-    public List<FetchedPostDTO> getPosts() {
-        List<Post> allPosts = postRepository.findAll();
+    private FetchedPostDTO getFetchedPostDTO(Post postDetails) {
+        FetchedPostDTO fetchedPost;
+
+        if (postDetails.getBannerImage() != null) {
+
+            fetchedPost =  new FetchedPostDTO(postDetails.getPostId(), postDetails.getTitle(), postDetails.getAuthor().getFirstname(), postDetails.getAuthor().getSurname(),
+                    postDetails.getCategories(), postDetails.getPostBody(), postDetails.isPrivatePost(), postDetails.getDate(), postDetails.getBannerImage().getAltText(), azureBlobService.getFile(postDetails.getBannerImage().getPhotoURL()));
+
+        }
+        else {
+
+        fetchedPost =  new FetchedPostDTO(postDetails.getPostId(), postDetails.getTitle(), postDetails.getAuthor().getFirstname(), postDetails.getAuthor().getSurname(),
+                postDetails.getCategories(), postDetails.getPostBody(), postDetails.isPrivatePost(), postDetails.getDate());
+        }
+
+        if (postDetails.getAuthor().getProfilePicURL() != null) {
+        fetchedPost.setAuthorImage(azureBlobService.getFile(postDetails.getAuthor().getProfilePicURL()));
+        }
 
 
-        List<FetchedPostDTO> posts = allPosts.stream().map(post -> {
+        return fetchedPost;
+    }
+    public List<FetchedPostDTO> convertPostListToFetchedPostDTOList(List<Post> posts) {
 
-            byte[] banner_image = azureBlobService.getFile(post.getBannerImage().getPhotoURL());
+        return posts.stream().map(post -> {
 
-            return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                    post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate() ,post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
+            return getFetchedPostDTO(post);
 
-        }).collect(Collectors.toList());
+        }).toList();
 
-        return posts;
     }
 
     public FetchedPostDTO getPostById(long id) throws PostDoesNotExistException {
@@ -59,22 +76,32 @@ public class PostService {
 
         Post postDetails = post.get();
 
-        if (postDetails.getBannerImage() != null) {
-
-            return new FetchedPostDTO(postDetails.getPostId(), postDetails.getTitle(), postDetails.getAuthor().getFirstname(), postDetails.getAuthor().getSurname(),
-                    postDetails.getCategories(), postDetails.getPostBody(), postDetails.isPrivatePost(), postDetails.getDate(), postDetails.getBannerImage().getAltText(), azureBlobService.getFile(postDetails.getBannerImage().getPhotoURL()));
-
-
-        }
-
-        return new FetchedPostDTO(postDetails.getPostId(), postDetails.getTitle(), postDetails.getAuthor().getFirstname(), postDetails.getAuthor().getSurname(),
-                postDetails.getCategories(), postDetails.getPostBody(), postDetails.isPrivatePost(), postDetails.getDate());
+        return getFetchedPostDTO(postDetails);
     }
 
-    public List<Post> getPostsByCategory(Long categoryId) {
-        return postRepository.findByCategory(categoryId);
+    public List<FetchedPostDTO> getPosts() {
+        List<Post> allPosts = postRepository.findAll();
+        return convertPostListToFetchedPostDTOList(allPosts);
     }
 
+    public List<FetchedPostDTO> getPostsByCategory(Long categoryId) {
+        List<Post> categoryPostsResponse = postRepository.findByCategory(categoryId);
+
+        return convertPostListToFetchedPostDTOList(categoryPostsResponse);
+    }
+
+    public List<FetchedPostDTO> getLatestPosts() {
+        List<Post> latestPostsResponse =  postRepository.findLatestPosts();
+
+        return convertPostListToFetchedPostDTOList(latestPostsResponse);
+    }
+
+    public List<FetchedPostDTO> getPublicPosts() {
+        List<Post> publicPostsResponse =  postRepository.findPublicPosts();
+
+        return convertPostListToFetchedPostDTOList(publicPostsResponse);
+
+    }
     public Post createPost(PostDTO post) {
 
         try {
@@ -94,58 +121,9 @@ public class PostService {
 
     }
 
-    public List<FetchedPostDTO> getLatestPosts() {
-        List<Post> latestPostsResponse =  postRepository.findLatestPosts();
-
-        List<FetchedPostDTO> latestPosts = latestPostsResponse.stream().map(post -> {
-
-            if (post.getBannerImage() != null) {
-
-                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate(), post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
-
-            }
-            else {
-
-                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate());
-
-
-            }
-
-        }).toList();
-
-        return latestPosts;
-    }
-
-    public List<FetchedPostDTO> getPublicPosts() {
-        List<Post> latestPostsResponse =  postRepository.findPublicPosts();
-
-        List<FetchedPostDTO> latestPosts = latestPostsResponse.stream().map(post -> {
-
-            if (post.getBannerImage() != null) {
-
-                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate(), post.getBannerImage().getAltText(), azureBlobService.getFile(post.getBannerImage().getPhotoURL()));
-
-            }
-            else {
-
-                return new FetchedPostDTO(post.getPostId(), post.getTitle(), post.getAuthor().getFirstname(), post.getAuthor().getSurname(),
-                        post.getCategories(), post.getPostBody(), post.isPrivatePost(), post.getDate());
-
-
-            }
-
-        }).collect(Collectors.toList());
-
-        return latestPosts;
-    }
-
     public void deletePost(long id) {
         postRepository.deleteById(id);
     }
-
 
     @Transactional
     public void updatePost(Post updatedPost) {
