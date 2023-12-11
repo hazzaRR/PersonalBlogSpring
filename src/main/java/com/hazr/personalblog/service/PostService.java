@@ -104,6 +104,21 @@ public class PostService {
         return convertPostListToFetchedPostDTOList(publicPostsResponse);
 
     }
+
+    public List<FetchedPostDTO> getPostsByAuthor(String username) {
+
+        Optional<User> userAccount = userRepository.findByUsername(username);
+
+
+        if (userAccount.isEmpty()) {
+            throw new UsernameDoesNotExistException("the username "+ username + " does not exist");
+        }
+        List<Post> authorPostsResponse = postRepository.findByAuthor(userAccount.get());
+
+        return convertPostListToFetchedPostDTOList(authorPostsResponse);
+
+
+    }
     public Post createPost(PostDTO post) {
 
         try {
@@ -145,4 +160,5 @@ public class PostService {
         existingPost.setPrivatePost(updatedPost.isPrivatePost());
 
     }
+
 }
