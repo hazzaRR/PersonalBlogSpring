@@ -1,2 +1,7 @@
-package com.hazr.personalblog.exception;public class UsernameDoesNotExistException {
+package com.hazr.personalblog.exception;
+
+public class UsernameDoesNotExistException extends RuntimeException {
+    public UsernameDoesNotExistException(String message) {
+        super(message);
+    }
 }

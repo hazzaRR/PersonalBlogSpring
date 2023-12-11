@@ -1,6 +1,7 @@
 package com.hazr.personalblog.repository;
 
 import com.hazr.personalblog.model.Post;
+import com.hazr.personalblog.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "JOIN blogpost_category bc ON p.post_id = bc.post_id " +
             "WHERE bc.category_id = ?1", nativeQuery = true)
     List<Post> findByCategory(long categoryId);
+
+    List<Post> findByAuthor(User author);
 
 
     @Query(value = "SELECT p.* FROM post p " +

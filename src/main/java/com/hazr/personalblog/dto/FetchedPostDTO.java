@@ -26,6 +26,7 @@ public class FetchedPostDTO {
     private String altText;
 
     private byte[] bannerImage;
+    private byte[] authorImage;
 
 
     public FetchedPostDTO() {
@@ -126,6 +127,14 @@ public class FetchedPostDTO {
 
     public void setBannerImage(byte[] bannerImage) {
         this.bannerImage = bannerImage;
+    }
+
+    public byte[] getAuthorImage() {
+        return authorImage;
+    }
+
+    public void setAuthorImage(byte[] authorImage) {
+        this.authorImage = authorImage;
     }
 
     public LocalDate getPostedOn() {

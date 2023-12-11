@@ -4,6 +4,7 @@ import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.exception.PostDoesNotExistException;
 import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
+import com.hazr.personalblog.exception.UsernameDoesNotExistException;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.service.AzureBlobService;
 import com.hazr.personalblog.service.PostImageService;
@@ -83,26 +84,12 @@ public class PostController {
 
     //get posts by category
 
-//    @GetMapping(name = "/search")
-//    public List<Post> getPostByCategory(@RequestParam(required = false) Long categoryId) {
-//        return postService.getPostsByCategory(categoryId);
-//
-//    }
+    //get posts by certain author
 
-
-//    @GetMapping("/postId/{id}")
-//    public ResponseEntity<byte[]> downloadBlob(@PathVariable long id) {
-//
-//        byte[] data = azureBlobService.getFile(blobName);
-//        if (data != null) {
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentLength(data.length);
-////            headers.set("Content-Disposition", "attachment; filename=" + blobName);
-//            return new ResponseEntity<>(data, headers, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @GetMapping ("/user-posts/{username}")
+    public List<FetchedPostDTO> getPostsByAuthor(@PathVariable String username) {
+        return postService.getPostsByAuthor(username);
+    }
 
     //get all public posts
 
@@ -111,7 +98,7 @@ public class PostController {
         return postService.getPublicPosts();
     }
 
-    //get top 8 latest posts
+    //get top 10 latest posts
 
     @GetMapping("/latest")
     public List<FetchedPostDTO> getLatestPosts() {
@@ -162,6 +149,11 @@ public class PostController {
 
     @ExceptionHandler(PostDoesNotExistException.class)
     public ResponseEntity<String> handlePostDoesNotExistException(PostDoesNotExistException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    @ExceptionHandler(UsernameDoesNotExistException.class)
+    public ResponseEntity<String> handleUsernameDoesNotExistException(UsernameDoesNotExistException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

@@ -2,6 +2,8 @@ package com.hazr.personalblog.controller;
 
 
 import com.hazr.personalblog.dto.CategoryDTO;
+import com.hazr.personalblog.exception.CategoryAlreadyExistsException;
+import com.hazr.personalblog.exception.UsernameDoesNotExistException;
 import com.hazr.personalblog.model.Category;
 import com.hazr.personalblog.service.CategoryService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -32,8 +34,8 @@ public class CategoryController {
         categoryService.createCategory(category.getCategoryName());
     }
 
-    @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handlePasswordDoesNotMatchException(DataIntegrityViolationException e) {
+    @ExceptionHandler(CategoryAlreadyExistsException.class)
+    public ResponseEntity<String> handleCategoryAlreadyExistsException(CategoryAlreadyExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 }

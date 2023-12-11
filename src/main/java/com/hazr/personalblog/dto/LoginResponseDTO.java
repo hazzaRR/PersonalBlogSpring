@@ -9,6 +9,8 @@ public class LoginResponseDTO {
 
     private List<String> roles;
 
+    private byte[] profilePicture;
+
     public LoginResponseDTO() {
 
     }
@@ -17,6 +19,13 @@ public class LoginResponseDTO {
         this.username = username;
         this.token = token;
         this.roles = roles;
+    }
+
+    public LoginResponseDTO(String username, String token, List<String> roles, byte[] profilePicture) {
+        this.username = username;
+        this.token = token;
+        this.roles = roles;
+        this.profilePicture = profilePicture;
     }
 
     public String getUsername() {
@@ -41,5 +50,13 @@ public class LoginResponseDTO {
 
     public void setRoles(List<String> roles) {
         this.roles = roles;
+    }
+
+    public byte[] getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(byte[] profilePicture) {
+        this.profilePicture = profilePicture;
     }
 }
