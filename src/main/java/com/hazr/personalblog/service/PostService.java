@@ -144,6 +144,12 @@ public class PostService {
     }
 
     public void deletePost(long id) {
+
+        Optional<Post> post = postRepository.findById(id);
+
+        if (post.isPresent() && post.get().getBannerImage() != null && post.get().getBannerImage().getPhotoURL() != null) {
+            azureBlobService.deleteBlob(post.get().getBannerImage().getPhotoURL());
+        }
         postRepository.deleteById(id);
     }
 
