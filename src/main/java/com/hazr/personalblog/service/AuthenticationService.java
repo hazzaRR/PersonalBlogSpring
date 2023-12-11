@@ -35,13 +35,16 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final AzureBlobService azureBlobService;
+
     private final TokenService tokenService;
 
-    public AuthenticationService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenService tokenService) {
+    public AuthenticationService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, AzureBlobService azureBlobService, TokenService tokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
+        this.azureBlobService = azureBlobService;
         this.tokenService = tokenService;
     }
 
@@ -78,7 +81,19 @@ public class AuthenticationService {
 
 //            List<Role> userRoles = userRepository.findUserRoles(username);
 
-            return new LoginResponseDTO(username, token, roles);
+            Optional<User> loggedInUser = userRepository.findByUsername(username);
+
+
+            LoginResponseDTO userDetails;
+
+            if (loggedInUser.isPresent() && loggedInUser.get().getProfilePicURL() != null)
+            {
+                userDetails = new LoginResponseDTO(username, token, roles, azureBlobService.getFile(loggedInUser.get().getProfilePicURL()));
+            } else {
+                userDetails = new LoginResponseDTO(username, token, roles);
+            }
+
+            return userDetails;
 
         } catch(AuthenticationException e) {
             System.out.println(e);
