@@ -20,3 +20,10 @@ azure:
       name: blog-images
     connection:
       string: ${connection_string}
+
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

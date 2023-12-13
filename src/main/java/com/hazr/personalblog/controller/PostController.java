@@ -64,14 +64,7 @@ public class PostController {
         return postService.getPosts();
     }
 
-    @GetMapping("/hello")
-    public String getResponse() {
-        return "hello harry";
-    }
-
-
     //get specific post by id
-
     @GetMapping(path = "/postId/{id}")
     public FetchedPostDTO getPostById(@PathVariable long id) {
         return postService.getPostById(id);
@@ -142,9 +135,17 @@ public class PostController {
     }
 
     //update post
-    @PutMapping("/postId/{postId}")
-    public void updatePost(@PathVariable Long postId, @RequestBody Post updatedPost) {
-        postService.updatePost(updatedPost);
+    @PutMapping("/postId/{id}")
+    public void updatePost(@PathVariable long id, @RequestPart("postDetails") PostDTO postDetails, @RequestPart(value = "bannerImage", required = false) MultipartFile image_file) {
+
+        try {
+
+            postService.updatePost(id, postDetails, image_file);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @ExceptionHandler(PostDoesNotExistException.class)

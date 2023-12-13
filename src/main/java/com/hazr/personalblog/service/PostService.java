@@ -4,7 +4,6 @@ package com.hazr.personalblog.service;
 import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
 import com.hazr.personalblog.exception.PostDoesNotExistException;
-import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
 import com.hazr.personalblog.exception.UsernameDoesNotExistException;
 import com.hazr.personalblog.model.Post;
 import com.hazr.personalblog.model.User;
@@ -13,11 +12,13 @@ import com.hazr.personalblog.repository.PostRepository;
 import com.hazr.personalblog.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -25,13 +26,16 @@ public class PostService {
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
 
+    private final PostImageService postImageService;
+
     private final UserRepository userRepository;
 
     private final AzureBlobService azureBlobService;
 
-    public PostService(PostRepository postRepository, CategoryRepository categoryRepository, UserRepository userRepository, AzureBlobService azureBlobService) {
+    public PostService(PostRepository postRepository, CategoryRepository categoryRepository, PostImageService postImageService, UserRepository userRepository, AzureBlobService azureBlobService) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
+        this.postImageService = postImageService;
         this.userRepository = userRepository;
         this.azureBlobService = azureBlobService;
 
@@ -147,23 +151,47 @@ public class PostService {
 
         Optional<Post> post = postRepository.findById(id);
 
-        if (post.isPresent() && post.get().getBannerImage() != null && post.get().getBannerImage().getPhotoURL() != null) {
+        if (post.isEmpty()) {
+            throw new PostDoesNotExistException("Post not found with ID: " + id);
+        }
+
+        if(post.get().getBannerImage() != null && post.get().getBannerImage().getPhotoURL() != null) {
             azureBlobService.deleteBlob(post.get().getBannerImage().getPhotoURL());
         }
+
         postRepository.deleteById(id);
     }
 
     @Transactional
-    public void updatePost(Post updatedPost) {
+    public void updatePost(long id, PostDTO updatedPost, MultipartFile image_file) throws IOException {
 
-        Post existingPost = postRepository.findById(updatedPost.getPostId())
-                .orElseThrow(() -> new RuntimeException("Post not found with ID: " + updatedPost.getPostId()));
+        Post existingPost = postRepository.findById(id)
+                .orElseThrow(() -> new PostDoesNotExistException("Post not found with ID: " + id));
 
-        existingPost.setTitle(updatedPost.getTitle());
-        existingPost.setCategories(updatedPost.getCategories());
-        existingPost.setDate(updatedPost.getDate());
-        existingPost.setPostBody(updatedPost.getPostBody());
-        existingPost.setPrivatePost(updatedPost.isPrivatePost());
+
+        if (image_file != null) {
+            String fileName = azureBlobService.upload("postId_" + existingPost.getPostId() + "_bannerImage", image_file);
+            if (existingPost.getBannerImage() == null) {
+                postImageService.createPostImage(existingPost, fileName, updatedPost.getAltText());
+            }
+
+        }
+
+        if(updatedPost.getTitle() != null && !updatedPost.getTitle().isEmpty() && !Objects.equals(updatedPost.getTitle(), existingPost.getTitle())) {
+            existingPost.setTitle(updatedPost.getTitle());
+        }
+
+        if(updatedPost.getCategories() != null && !updatedPost.getCategories().isEmpty() && !Objects.equals(updatedPost.getCategories(), existingPost.getCategories())) {
+            existingPost.setCategories(updatedPost.getCategories());
+        }
+
+        if(updatedPost.getContent() != null && !updatedPost.getContent().isEmpty() && !Objects.equals(updatedPost.getContent(), existingPost.getPostBody())) {
+            existingPost.setPostBody(updatedPost.getContent());
+        }
+
+        if(!Objects.equals(updatedPost.isPrivatePost(), existingPost.isPrivatePost())) {
+            existingPost.setPrivatePost(updatedPost.isPrivatePost());
+        }
 
     }
 

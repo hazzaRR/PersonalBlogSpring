@@ -2,6 +2,7 @@ package com.hazr.personalblog.service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
@@ -28,11 +29,12 @@ public class TokenService {
 
         Instant now = Instant.now();
 
-        String scope = auth.getAuthorities().stream()
+        List<String> scope = auth.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.toList());
 
-
+        System.out.println(scope);
+        System.out.println(now.plus(1, ChronoUnit.DAYS));
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)

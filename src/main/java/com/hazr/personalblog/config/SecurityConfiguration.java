@@ -31,9 +31,10 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @Configuration
 public class SecurityConfiguration {
 
@@ -62,25 +63,27 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/auth/**").permitAll();
-                    auth.requestMatchers("/api/posts/**").permitAll();
-                    auth.requestMatchers("/actuator/**").permitAll();
-                    auth.requestMatchers("/api/files/**").permitAll();
-                    auth.requestMatchers("/api/admin/**").permitAll();
-//                    auth.requestMatchers("/api/admin/**").hasRole("ADMIN");
-                    auth.requestMatchers("/api/category/**").permitAll();
+                    auth.requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll();
+                    auth.requestMatchers( "/api/posts/**").hasRole("AUTHOR");
+                    auth.requestMatchers("/actuator/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/files/**").hasRole("ADMIN");
+                    auth.requestMatchers("/api/admin/**").hasRole("ADMIN");
+                    auth.requestMatchers(HttpMethod.GET,"/api/category/**").permitAll();
+                    auth.requestMatchers("/api/category/**").hasAnyRole("AUTHOR", "ADMIN");
 //                    auth.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN");
                     auth.anyRequest().authenticated();
                 })
-                .oauth2ResourceServer(oauth ->
-                        oauth.jwt(Customizer.withDefaults()))
-//        .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-//                .jwtAuthenticationConverter(jwtAuthenticationConverter());
-//        http.oauth2ResourceServer()
+                .oauth2ResourceServer(oauth -> oauth
+                        .jwt(jwt -> jwt
+                                .decoder(jwtDecoder())
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        ))
+//        .oauth2ResourceServer()
 //                .jwt()
-//                .jwtAuthenticationConverter(jwtAuthenticationConverter());
+//                .jwtAuthenticationConverter(jwtAuthenticationConverter())
 
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .build();
@@ -99,10 +102,11 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter(){
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
         jwtConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtConverter;
