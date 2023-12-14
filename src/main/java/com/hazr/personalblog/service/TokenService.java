@@ -7,10 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -38,7 +35,8 @@ public class TokenService {
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer("self")
                 .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.DAYS))
+//                .expiresAt(now.plus(1, ChronoUnit.DAYS))
+                .expiresAt(now.plus(1, ChronoUnit.MINUTES))
                 .subject(auth.getName())
                 .claim("roles", scope)
                 .build();
@@ -46,6 +44,17 @@ public class TokenService {
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
 
 
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Jwt jwt = jwtDecoder.decode(token);
+            Instant expirationTime = jwt.getExpiresAt();
+            return expirationTime != null && expirationTime.isBefore(Instant.now());
+        } catch (Exception e) {
+            // Handle decoding exceptions (invalid token, etc.)
+            return true;
+        }
     }
 
 
