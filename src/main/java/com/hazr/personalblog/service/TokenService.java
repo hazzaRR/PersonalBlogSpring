@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class TokenService {
 
-    private JwtEncoder jwtEncoder;
+    private final JwtEncoder jwtEncoder;
 
-    private JwtDecoder jwtDecoder;
+    private final JwtDecoder jwtDecoder;
 
     public TokenService (JwtEncoder jwtEncoder, JwtDecoder jwtDecoder) {
         this.jwtDecoder = jwtDecoder;
@@ -50,6 +50,7 @@ public class TokenService {
         try {
             Jwt jwt = jwtDecoder.decode(token);
             Instant expirationTime = jwt.getExpiresAt();
+            jwt.getSubject();
             return expirationTime != null && expirationTime.isBefore(Instant.now());
         } catch (Exception e) {
             // Handle decoding exceptions (invalid token, etc.)
