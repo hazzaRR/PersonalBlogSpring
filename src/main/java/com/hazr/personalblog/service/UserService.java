@@ -1,21 +1,18 @@
 package com.hazr.personalblog.service;
 
-import com.hazr.personalblog.dto.LoginResponseDTO;
 import com.hazr.personalblog.dto.UpdateUserDetailsDTO;
 import com.hazr.personalblog.dto.UserDTO;
 import com.hazr.personalblog.exception.EmailAlreadyTakenException;
+import com.hazr.personalblog.exception.IncorrectPasswordException;
 import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
 import com.hazr.personalblog.exception.UsernameDoesNotExistException;
 import com.hazr.personalblog.model.User;
 import com.hazr.personalblog.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,11 +28,13 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final AzureBlobService azureBlobService;
 
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, AzureBlobService azureBlobService, AuthenticationManager authenticationManager) {
+
+    public UserService(UserRepository userRepository, AzureBlobService azureBlobService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.azureBlobService = azureBlobService;
-        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -70,12 +69,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserDTO updateUserDetails(String username, UpdateUserDetailsDTO userDetails, MultipartFile profilePicture) throws LoginException, IOException {
-
-        try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, userDetails.getPassword())
-            );
+    public UserDTO updateUserDetails(String username, UpdateUserDetailsDTO userDetails, MultipartFile profilePicture) throws IOException {
 
             Optional<User> user = userRepository.findByUsername(username);
 
@@ -83,7 +77,12 @@ public class UserService implements UserDetailsService {
                 throw new UsernameDoesNotExistException("the username " + username + " does not exist");
             }
 
+
             User loggedInUser = user.get();
+
+            if(!passwordEncoder.matches(userDetails.getPassword(), loggedInUser.getPassword())) {
+                throw new IncorrectPasswordException("password provided is incorrect");
+            }
 
             if (userDetails.getUsername() != null && !userDetails.getUsername().isEmpty() && !Objects.equals(userDetails.getUsername(), loggedInUser.getUsername())) {
                 Optional<User> usernameAlreadyExists = userRepository.findByUsername(userDetails.getUsername());
@@ -124,11 +123,6 @@ public class UserService implements UserDetailsService {
             }
 
             return this.getUserDetails(loggedInUser.getUsername());
-
-        } catch (AuthenticationException e) {
-            System.out.println(e);
-            throw new LoginException("incorrect password");
-        }
 
     }
 
