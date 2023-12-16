@@ -90,6 +90,13 @@ public class UserService implements UserDetailsService {
                     throw new UsernameAlreadyTakenException("the username " + username + " is already taken");
                 }
                 loggedInUser.setUsername(userDetails.getUsername());
+
+                //update location of profile picture
+                if (loggedInUser.getProfilePicURL() != null) {
+                    byte[] file = azureBlobService.getFile(loggedInUser.getProfilePicURL());
+                    azureBlobService.deleteBlob(loggedInUser.getProfilePicURL());
+                    azureBlobService.uploadByteArray(userDetails.getUsername() + "_profilePicture", file);
+                }
             }
 
             if (userDetails.getEmail() != null && !userDetails.getEmail().isEmpty() && !Objects.equals(userDetails.getEmail(), loggedInUser.getEmail())) {
@@ -114,6 +121,7 @@ public class UserService implements UserDetailsService {
 
 
             if (profilePicture != null) {
+                System.out.println("this goes here");
                 String fileName = azureBlobService.upload(loggedInUser.getUsername() + "_profilePicture", profilePicture);
 
                 if (loggedInUser.getProfilePicURL() == null) {

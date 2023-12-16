@@ -1,4 +1,5 @@
 package com.hazr.personalblog.service;
+import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
@@ -29,6 +30,13 @@ public class AzureBlobService {
         blobClient.upload(multipartFile.getInputStream(), multipartFile.getSize(), true);
 
         return fileName;
+    }
+
+    public String uploadByteArray(String blobName, byte[] image) throws IOException {
+        BlobClient blobClient = blobContainerClient.getBlobClient(blobName+".png");
+        blobClient.upload(BinaryData.fromBytes(image), true);
+
+        return blobName+".png";
     }
 
     public byte[] getFile(String fileName) {

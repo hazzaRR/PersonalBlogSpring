@@ -31,7 +31,7 @@ public class UserController {
         return userService.getUserDetails(username);
     }
 
-    @PostMapping("/{username}")
+    @PutMapping("/{username}")
     public UserDTO updateUserDetails(@PathVariable String username, @RequestPart("userDetails") UpdateUserDetailsDTO userDetailsDTO, @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) throws LoginException, IOException {
         return userService.updateUserDetails(username, userDetailsDTO, profilePicture);
     }
