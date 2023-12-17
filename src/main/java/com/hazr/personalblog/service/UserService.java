@@ -84,20 +84,21 @@ public class UserService implements UserDetailsService {
                 throw new IncorrectPasswordException("password provided is incorrect");
             }
 
-            if (userDetails.getUsername() != null && !userDetails.getUsername().isEmpty() && !Objects.equals(userDetails.getUsername(), loggedInUser.getUsername())) {
-                Optional<User> usernameAlreadyExists = userRepository.findByUsername(userDetails.getUsername());
-                if (usernameAlreadyExists.isPresent()) {
-                    throw new UsernameAlreadyTakenException("the username " + username + " is already taken");
-                }
-                loggedInUser.setUsername(userDetails.getUsername());
-
-                //update location of profile picture
-                if (loggedInUser.getProfilePicURL() != null) {
-                    byte[] file = azureBlobService.getFile(loggedInUser.getProfilePicURL());
-                    azureBlobService.deleteBlob(loggedInUser.getProfilePicURL());
-                    azureBlobService.uploadByteArray(userDetails.getUsername() + "_profilePicture", file);
-                }
-            }
+//            if (userDetails.getUsername() != null && !userDetails.getUsername().isEmpty() && !Objects.equals(userDetails.getUsername(), loggedInUser.getUsername())) {
+//                Optional<User> usernameAlreadyExists = userRepository.findByUsername(userDetails.getUsername());
+//                if (usernameAlreadyExists.isPresent()) {
+//                    throw new UsernameAlreadyTakenException("the username " + username + " is already taken");
+//                }
+//                loggedInUser.setUsername(userDetails.getUsername());
+//
+//                //update location of profile picture
+//                if (loggedInUser.getProfilePicURL() != null) {
+//                    byte[] file = azureBlobService.getFile(loggedInUser.getProfilePicURL());
+//                    azureBlobService.deleteBlob(loggedInUser.getProfilePicURL());
+//                    String filename = azureBlobService.uploadByteArray(userDetails.getUsername() + "_profilePicture", file);
+//                    loggedInUser.setProfilePicURL(filename);
+//                }
+//            }
 
             if (userDetails.getEmail() != null && !userDetails.getEmail().isEmpty() && !Objects.equals(userDetails.getEmail(), loggedInUser.getEmail())) {
 
