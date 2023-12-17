@@ -15,8 +15,10 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -102,7 +104,7 @@ public class AuthenticationService {
         }
     }
 
-    public User registerAuthor(String username, String password, String firstname, String surname, String email, String profilePicURL) throws EmailAlreadyTakenException, UsernameAlreadyTakenException{
+    public User registerAuthor(String username, String password, String firstname, String surname, String email, MultipartFile image_file) throws EmailAlreadyTakenException, UsernameAlreadyTakenException {
 
 
         Optional<User> usernameAlreadyExists = userRepository.findByUsername(username);
@@ -125,6 +127,20 @@ public class AuthenticationService {
 
         Set<Role> authorities = new HashSet<>(List.of(new Role[]{roleReader, roleAuthor}));
 
-        return userRepository.save(new User(username, encryptedPassword, authorities, firstname, surname, email, profilePicURL));
+        User newAuthor =  userRepository.save(new User(username, encryptedPassword, authorities, firstname, surname, email, null));
+
+        try {
+            if (image_file != null) {
+
+                String fileName = azureBlobService.upload(newAuthor.getUsername() + "_profilePicture", image_file);
+                newAuthor.setProfilePicURL(fileName);
+            }
+
+        }
+        catch (IOException e) {
+            System.out.println("Error uploading profile picture");
+        }
+
+        return newAuthor;
     }
 }

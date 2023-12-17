@@ -31,22 +31,11 @@ public class AdminController {
 
     @PostMapping("/register-author")
     public String registerAuthor (@RequestPart("authorDetails") RegistrationDTO body, @RequestPart(value = "profilePicture", required = false) MultipartFile image_file) {
-        try {
             User user;
 
-            user = authenticationService.registerAuthor(body.getUsername(), body.getPassword(), body.getFirstname(), body.getSurname(), body.getEmail(), null);
-            if (image_file != null) {
-
-                String fileName = azureBlobService.upload(body.getUsername() + "_profilePicture", image_file);
-                user.setProfilePicURL(fileName);
-            }
+            user = authenticationService.registerAuthor(body.getUsername(), body.getPassword(), body.getFirstname(), body.getSurname(), body.getEmail(), image_file);
 
             return "User successfully created with username: " + user.getUsername();
-
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 

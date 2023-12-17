@@ -47,26 +47,6 @@ public class AuthController {
         return ResponseEntity.ok(loginResponse);
     }
 
-//    @GetMapping("/check")
-//    public String authCheck(Principal principal) {
-//        return "hello" + principal.getName();
-//    }
-
-    @PostMapping("/check")
-        public String checkAuthentication(@RequestHeader (name="Authorization") String token, @RequestBody AuthDetailsDTO authDetails) {
-
-        String[] tokenValue = token.trim().split(" ");
-
-        System.out.println(tokenValue[1]);
-
-//        if (tokenService.isTokenExpired(tokenValue[1])) {
-//            System.out.println("token expired");
-//        }
-
-        return "This is a test";
-    }
-
-
     @ExceptionHandler(LoginException.class)
     public ResponseEntity<String> handleAuthenticationException(LoginException e) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());

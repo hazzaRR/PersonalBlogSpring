@@ -1,5 +1,6 @@
 package com.hazr.personalblog.controller;
 
+import com.hazr.personalblog.dto.UpdatePasswordDTO;
 import com.hazr.personalblog.dto.UpdateUserDetailsDTO;
 import com.hazr.personalblog.dto.UserDTO;
 import com.hazr.personalblog.exception.IncorrectPasswordException;
@@ -34,6 +35,11 @@ public class UserController {
     @PutMapping("/{username}")
     public UserDTO updateUserDetails(@PathVariable String username, @RequestPart("userDetails") UpdateUserDetailsDTO userDetailsDTO, @RequestPart(value = "profilePicture", required = false) MultipartFile profilePicture) throws LoginException, IOException {
         return userService.updateUserDetails(username, userDetailsDTO, profilePicture);
+    }
+
+    @PutMapping("/update-password")
+    public void updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO) throws LoginException {
+        userService.updatePassword(updatePasswordDTO);
     }
 
     @ExceptionHandler(IncorrectPasswordException.class)

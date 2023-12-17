@@ -1,5 +1,6 @@
 package com.hazr.personalblog.service;
 
+import com.hazr.personalblog.dto.UpdatePasswordDTO;
 import com.hazr.personalblog.dto.UpdateUserDetailsDTO;
 import com.hazr.personalblog.dto.UserDTO;
 import com.hazr.personalblog.exception.EmailAlreadyTakenException;
@@ -122,7 +123,6 @@ public class UserService implements UserDetailsService {
 
 
             if (profilePicture != null) {
-                System.out.println("this goes here");
                 String fileName = azureBlobService.upload(loggedInUser.getUsername() + "_profilePicture", profilePicture);
 
                 if (loggedInUser.getProfilePicURL() == null) {
@@ -135,4 +135,22 @@ public class UserService implements UserDetailsService {
 
     }
 
+    public void updatePassword(UpdatePasswordDTO updatePasswordDTO) {
+
+        Optional<User> user = userRepository.findByUsername(updatePasswordDTO.getUsername());
+
+        if (user.isEmpty()) {
+            throw new UsernameDoesNotExistException("the username " + updatePasswordDTO.getUsername() + " does not exist");
+        }
+
+        User loggedInUser = user.get();
+
+        if(!passwordEncoder.matches(updatePasswordDTO.getPassword(), loggedInUser.getPassword())) {
+            throw new IncorrectPasswordException("password provided is incorrect");
+        }
+
+        String encryptedPassword =  passwordEncoder.encode(updatePasswordDTO.getNewPassword());
+
+        loggedInUser.setPassword(encryptedPassword);
+    }
 }
