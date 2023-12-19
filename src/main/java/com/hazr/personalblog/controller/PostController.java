@@ -2,6 +2,7 @@ package com.hazr.personalblog.controller;
 
 import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
+import com.hazr.personalblog.dto.UpdatePostDTO;
 import com.hazr.personalblog.exception.PostDoesNotExistException;
 import com.hazr.personalblog.exception.UsernameAlreadyTakenException;
 import com.hazr.personalblog.exception.UsernameDoesNotExistException;
@@ -137,7 +138,7 @@ public class PostController {
 
     //update post
     @PutMapping("/postId/{id}")
-    public void updatePost(@PathVariable long id, @RequestPart("postDetails") PostDTO postDetails, @RequestPart(value = "bannerImage", required = false) MultipartFile image_file) {
+    public void updatePost(@PathVariable long id, @RequestPart("postDetails") UpdatePostDTO postDetails, @RequestPart(value = "bannerImage", required = false) MultipartFile image_file) {
 
         try {
 

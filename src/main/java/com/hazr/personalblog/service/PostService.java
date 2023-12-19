@@ -3,6 +3,7 @@ package com.hazr.personalblog.service;
 
 import com.hazr.personalblog.dto.FetchedPostDTO;
 import com.hazr.personalblog.dto.PostDTO;
+import com.hazr.personalblog.dto.UpdatePostDTO;
 import com.hazr.personalblog.exception.PostDoesNotExistException;
 import com.hazr.personalblog.exception.UsernameDoesNotExistException;
 import com.hazr.personalblog.model.Post;
@@ -163,7 +164,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePost(long id, PostDTO updatedPost, MultipartFile image_file) throws IOException {
+    public void updatePost(long id, UpdatePostDTO updatedPost, MultipartFile image_file) throws IOException {
 
         Post existingPost = postRepository.findById(id)
                 .orElseThrow(() -> new PostDoesNotExistException("Post not found with ID: " + id));
@@ -187,6 +188,10 @@ public class PostService {
 
         if(updatedPost.getContent() != null && !updatedPost.getContent().isEmpty() && !Objects.equals(updatedPost.getContent(), existingPost.getPostBody())) {
             existingPost.setPostBody(updatedPost.getContent());
+        }
+
+        if(updatedPost.getAltText() != null && !updatedPost.getAltText().isEmpty() && !Objects.equals(updatedPost.getAltText(), existingPost.getBannerImage().getAltText())) {
+            existingPost.getBannerImage().setAltText(updatedPost.getAltText());
         }
 
         if(!Objects.equals(updatedPost.isPrivatePost(), existingPost.isPrivatePost())) {
