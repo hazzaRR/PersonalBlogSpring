@@ -7,4 +7,3 @@ services:
       - 'POSTGRES_USER=postgres'
     ports:
       - '54321:5432'
-    profiles: ['dev']
