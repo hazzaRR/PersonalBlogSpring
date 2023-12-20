@@ -135,6 +135,8 @@ public class UserService implements UserDetailsService {
 
     }
 
+
+    @Transactional
     public void updatePassword(UpdatePasswordDTO updatePasswordDTO) {
 
         Optional<User> user = userRepository.findByUsername(updatePasswordDTO.getUsername());

@@ -1,4 +1,22 @@
-#spring:
-#  datasource:
-#    username: ${db.username}
-#    password: ${db.password}
+spring:
+  datasource:
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    url: jdbc:postgresql://hazr.postgres.database.azure.com:5432/personal-blog?sslmode=require
+  sql:
+    init:
+      mode: always
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      format_sql: false
+
+azure:
+  storage:
+    container:
+      name: blog-images
+    connection:
+      string: ${connection_string}

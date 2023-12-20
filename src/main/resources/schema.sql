@@ -67,7 +67,7 @@ INSERT INTO roles (role_id, authority) VALUES (2, 'ROLE_READER') ON CONFLICT DO 
 INSERT INTO roles (role_id, authority) VALUES (3, 'ROLE_AUTHOR') ON CONFLICT DO NOTHING;
 
 -- Create a default user
-INSERT INTO users (user_id, username, password, firstname) VALUES (0, 'admin', '$2a$10$aOhmoNZNjM4mcHRjtajZ1Oyt8MQrBCvGI3kMwKFIOYEX01qzB3H.y', 'admin') ON CONFLICT DO NOTHING;
+INSERT INTO users (user_id, username, password, firstname) VALUES (0, 'admin', '$2a$10$EwkR./m0nafR6GhAOErcAOawGqG.4nYbVxgZkJbWqhEJHvbP6nzZm', 'admin') ON CONFLICT DO NOTHING;
 
 -- Assign roles to the default user
 INSERT INTO user_role (user_id, role_id) VALUES ((SELECT user_id FROM users WHERE username = 'admin'), (SELECT role_id FROM roles WHERE authority = 'ROLE_ADMIN')) ON CONFLICT DO NOTHING;

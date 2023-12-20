@@ -31,7 +31,8 @@ import com.nimbusds.jose.proc.SecurityContext;
 import java.time.Instant;
 
 
-@EnableWebSecurity(debug = true)
+//@EnableWebSecurity(debug = true)
+@EnableWebSecurity()
 @Configuration
 public class SecurityConfiguration {
 
@@ -72,7 +73,6 @@ public class SecurityConfiguration {
                     auth.requestMatchers("/api/user/**").authenticated();
                     auth.requestMatchers(HttpMethod.GET,"/api/category/**").permitAll();
                     auth.requestMatchers("/api/category/**").hasAnyRole("AUTHOR", "ADMIN");
-//                    auth.requestMatchers("/user/**").hasAnyRole("USER", "ADMIN");
                     auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth -> oauth
@@ -105,7 +105,6 @@ public class SecurityConfiguration {
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
         JwtAuthenticationConverter jwtConverter = new JwtAuthenticationConverter();
         jwtConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);

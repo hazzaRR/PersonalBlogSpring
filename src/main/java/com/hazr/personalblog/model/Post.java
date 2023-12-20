@@ -41,6 +41,9 @@ public class Post {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PostImage bannerImage;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PostImage> postImages;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
