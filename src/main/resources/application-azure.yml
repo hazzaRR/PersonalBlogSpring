@@ -1,8 +1,6 @@
 spring:
   datasource:
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-    url: jdbc:postgresql://hazr.postgres.database.azure.com:5432/personal-blog?sslmode=require
+    url: ${CUSTOMCONNSTR_DBConnection}
   sql:
     init:
       mode: always
