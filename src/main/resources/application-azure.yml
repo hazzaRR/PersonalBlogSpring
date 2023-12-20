@@ -17,4 +17,4 @@ azure:
     container:
       name: blog-images
     connection:
-      string: ${APPSETTING_connection_string}
+      string: ${CUSTOMCONNSTR_blob}
