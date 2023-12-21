@@ -19,7 +19,7 @@ azure:
     container:
       name: blog-images
     connection:
-      string: ${connection_string}
+      string: ${CUSTOMCONNSTR_blob}
 
 
 logging:
