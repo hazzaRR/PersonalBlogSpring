@@ -15,7 +15,7 @@ Welcome to the backend repository of my Personal Blog App, a full-stack blog app
 - **Vue.js:** Frontend framework for creating dynamic and interactive user interfaces.
 - **PostgreSQL:** Relational database for storing blog posts and user information.
 - **Azure Services:**
-  - **Azure Static Web Apps:** Hosts the frontend of the application.
+  - **Azure Static Web Apps:** Hosts the front end of the application.
   - **Azure App Service:** Delivers the backend API.
   - **Azure PostgreSQL:** Manages the PostgreSQL database.
   - **Azure Blob Storage:** Stores media files associated with blog posts.
@@ -32,33 +32,33 @@ Welcome to the backend repository of my Personal Blog App, a full-stack blog app
 
 1. **Clone the Repository:**
 
-   `
+   ```
    git clone https://github.com/your-username/personal-blog-backend.git
    cd personal-blog-backend
-   `
+   ```
 
-2. **Build the Project with Maven:**
-    `bash
+3. **Build the Project with Maven:**
+    ```
       mvn clean install
-    `
+    ```
 
- 3. **Run Docker Compose for PostgreSQL:**
-    `
+ 4. **Run Docker Compose for PostgreSQL:**
+    ```
     docker-compose up -d
-    `
- 4. **Configure Database Connection:**
+    ```
+ 5. **Configure Database Connection:**
     Update the application.properties file with your PostgreSQL connection details:
-    `
+    ```
     spring:
   datasource:
     username: <username>
     password: <password>
     url: jdbc:postgresql://localhost:54321/<db-name>
-    `
-5. **Run the Spring Boot Application:**
-   `
+    ```
+6. **Run the Spring Boot Application:**
+   ```
    mvn spring-boot:run
-   `
+   ```
 The API will be accessible at http://localhost:8080.
 
 
